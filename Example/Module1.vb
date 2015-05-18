@@ -77,7 +77,7 @@ Module Module1
                 'Auto set generic type for no return method.
                 Report.Invoke(Item, Operators(i))
 
-                'For function, request to specify type of this object and argumets.
+                'For function, request to specify type of this object and arguments.
                 Methods(i).Invoke(Of Object, Integer)(Item).WriteLine()
             Next
             Call "".WriteLine()
@@ -105,7 +105,7 @@ Public Class Calculus
     End Function
 
     Public Function [Sub]() As Integer
-        Return A + B
+        Return A - B
     End Function
 
     Public Function Mul() As Integer
