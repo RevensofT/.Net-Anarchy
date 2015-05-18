@@ -82,7 +82,7 @@
 		ret
 	}
 
-	.method public static void RawCopyTo<T, V>(!!V InputField, !!T OutputField) cil managed aggressiveinlining
+	.method public static void RawCopyTo<T, V>(!!T& InputField, !!V& OutputField, uint32 Length) cil managed aggressiveinlining
 	{
 		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 ) 
 		.maxstack 3

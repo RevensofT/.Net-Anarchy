@@ -3,8 +3,11 @@
 Module Module1
 
     Sub Main()
-        Dim Ex = New Byte() {1, 1, 2, 2}
-        Call (256).CopyTo(Ex)
+        Dim Box(1) As Byte
+        Call (258).RawCopyTo(Box(0), 2)
+        String.Format("Raw bytes of 258 is [{0}]", String.Join(",", Box)).WriteLine()
+        Call "".WriteLine()
+
         SizeAndConvert()
         Litegate()
 
