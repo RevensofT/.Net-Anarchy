@@ -20,7 +20,7 @@ It's much faster to get size of type by instance object then crawing on class st
 ## Direct cast object without limited.
 ```vb
 Dim VarA As New TypeA
-Dim VarB As Type B = VarA.As(Of TypeB)
+Dim VarB As TypeB = VarA.As(Of TypeB)
 ```
 Well, it's just a dance of illusions of IDE and compiler that make you believe in OOP illusions.
 However, don't touch an array type, I warn you unless you have a holy water for cure a curse from it. xD
