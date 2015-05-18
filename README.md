@@ -33,7 +33,7 @@ Call New With {.A = CByte(1), .B = CByte(1)}.CopyTo(FromBytes)
 
 'FromBytes == 257
 ```
-Much easier for transfer a data from reference type to value type but this method is measure size of data it going to copy by structure size... what ? you don't stil satisfy, well I still have a trick in my sleeve. ;)
+Much easier for transfer a data from reference type to value type but this method is measure size of data it going to copy by structure size... what ? you still don't satisfied with this, well I still have a trick in my sleeve. ;)
 
 ## Raw byte copy directly between any object
 ```vb
@@ -70,7 +70,7 @@ Module Module1
                 'Auto set generic type for no return method.
                 Report.Invoke(Item, Operators(i))
 
-                'For function, request to specify type of this object and argumets.
+                'For function, request to specify type of this object and arguments.
                 Methods(i).Invoke(Of Object, Integer)(Item).WriteLine()
             Next
         Next
@@ -112,3 +112,6 @@ Let's me talk about what's going on in code above like an evil genius talk about
 ***
 # It's not even my final form
 Ok guys, I might be out of trick...for now but you guys can give me a request what's kind of feature you want, maybe me or someone else can pull that trick and if you have your own trick that you want to share just pull a request, I need it  more from everyone to ANARCHY us from rule that create by C# and VB.net.
+
+## By the way
+Github might be show you that my project wrote by `VB.net` 100% but it's a lie... well let's say Github misunderstand about my code language in this project; MOST of code in this is `MSIL`, I have some Vb.net code for markup to make this project easy to test and edit with example project. If you looking for code, open `*.il`, most of `*.vb` is just for show except in example project.
