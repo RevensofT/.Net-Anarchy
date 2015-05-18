@@ -3,8 +3,6 @@
 Module Module1
 
     Sub Main()
-        Dim Ex = New Byte() {1, 1, 2, 2}
-        Call (256).CopyTo(Ex)
         SizeAndConvert()
         Litegate()
 
