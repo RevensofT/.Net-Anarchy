@@ -100,6 +100,7 @@ Result of 60 \ 40 = 1
 '===================================================
 ```
 Let's me talk about what's going on in code above like an evil genius talk about their plan to good guy.
+
 1. I create an instance object that going to be a base for other.
 2. I get all method address I want from create delegates of that instance object.
 3. Set up for a pretty report.
