@@ -14,6 +14,10 @@ Throw rules of Vb.net and C# away, we on our own.
 Dim MyVar As New MyType
 Dim Size = MyVar.Size(MyVar.LastField)
 ```
+```c#
+MyType MyVar = new MyType();
+var Size = MyVar.Size(ref MyVar.LastField);
+```
 I alway wonder why I can't find any function that give me a size of my class, I find many reason that said why can't but you know what, I find a way to get a raw data size on memory.
 It's much faster to get size of type by instance object then crawing on class structure, all you need to to do is mark start point and end point of it and measure it.
 
@@ -21,6 +25,10 @@ It's much faster to get size of type by instance object then crawing on class st
 ```vb
 Dim VarA As New TypeA
 Dim VarB As TypeB = VarA.As(Of TypeB)
+```
+```c#
+TypeA VarA = new TypeA();
+TypeB VarB = VarA.As<TypeB>();
 ```
 Well, it's just a dance of illusions of IDE and compiler that make you believe in OOP illusions.
 However, don't touch an array type, I warn you unless you have a holy water for cure a curse from it. xD
@@ -34,6 +42,13 @@ Call New With {.A = CByte(1), .B = CByte(1)}.CopyTo(FromBytes)
 
 'FromBytes == 257
 ```
+```c#
+short FromBytes = 0;
+new {A = (byte)1, B = (btye)1}.CopyTo(FromBtyes);
+
+//Sadly C# can't use extension method when first argument call by ref.
+//So you can't copy from class to structure request by extension method, need to do it normally.
+```
 Much easier for transfer a data from reference type to value type but this method is measure size of data it going to copy by structure size... what ? you still don't satisfied with this, well I still have a trick in my sleeve. ;)
 
 ## Raw byte copy directly between any object
@@ -42,6 +57,13 @@ Dim Box(1) As Byte
 Call (258).RawCopyTo(Box(0), 2) ' Copy 2 bytes from 258 to Box since element index 0.
 
 'Box == {2, 1}
+```
+```c#
+byte[] Box = new byte[2];
+short MyVal = 258;
+Anarchy.Convert.RawCopyTo<short, byte>(ref MyVal, ref Box[0], (uint)2);
+
+//Sadly C# can't use extension method when first argument call by ref.
 ```
 Now you are become a wizard, you can copy any data of any object to other object just by reference to a field of an object you want to start copy and a field of an object you want to paste that data then push a number of byte of that data you want but beware you mighty spell might be not over come the mighty of authority.
 
