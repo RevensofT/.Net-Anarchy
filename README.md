@@ -44,7 +44,7 @@ Call New With {.A = CByte(1), .B = CByte(1)}.CopyTo(FromBytes)
 ```
 ```c#
 short FromBytes = 0;
-new {A = (byte)1, B = (btye)1}.CopyTo(FromBtyes);
+new {A = (byte)1, B = (byte)1}.CopyTo(FromBtyes);
 
 //Sadly C# can't use extension method when first argument call by ref.
 //So you can't copy from class to structure request by extension method, need to do it normally.
