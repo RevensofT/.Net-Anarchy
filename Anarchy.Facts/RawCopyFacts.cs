@@ -81,5 +81,43 @@ namespace Anarchy.Facts {
       Assert.Equal("0000000000000000" + "11001100" + "10101100",
                    System.Convert.ToString(dest, toBase: 2).PadLeft(32, '0'));
     }
+
+    [Fact]
+    public void FromInt32ToInt32() {
+      int source = System.Convert.ToInt32("00000001" + "00000010" + "00000011" + "00000100", fromBase: 2);
+      string binary = "00000000" + "00000000" + "00000000" + "00000000";
+      int dest = System.Convert.ToInt32(binary, fromBase: 2);
+
+      Convert.RawCopyTo(ref source, ref dest, 4);
+
+      Assert.Equal("00000001" + "00000010" + "00000011" + "00000100",
+                   System.Convert.ToString(dest, toBase: 2).PadLeft(32, '0'));
+    }
+
+    [Fact]
+    public void FromInt32ToInt16() {
+      int source = System.Convert.ToInt32("00000001" + "00000010" + "00000011" + "00000100", fromBase: 2);
+      string binary = "00000000" + "00000000";
+      short dest = System.Convert.ToInt16(binary, fromBase: 2);
+
+      Convert.RawCopyTo(ref source, ref dest, 4);
+
+      Assert.Equal("00000011" + "00000100",
+                   System.Convert.ToString(dest, toBase: 2).PadLeft(16, '0'));
+    }
+
+
+    [Fact]
+    public void FromInt32ToInt16_2Bytes() {
+      int source = System.Convert.ToInt32("00000001" + "00000010" + "00000011" + "00000100", fromBase: 2);
+      string binary = "00000000" + "00000000";
+      short dest = System.Convert.ToInt16(binary, fromBase: 2);
+
+      Convert.RawCopyTo(ref source, ref dest, 2);
+
+      Assert.Equal("00000011" + "00000100",
+                   System.Convert.ToString(dest, toBase: 2).PadLeft(16, '0'));
+    }
+
   }
 }
