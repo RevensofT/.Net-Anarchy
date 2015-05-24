@@ -43,7 +43,7 @@ namespace Anarchy.Facts {
 
 
     [Fact]
-    public void FromInt32ToTwoBytes() {
+    public void FromInt32ToFourBytes() {
       string binary = "00001011" + "00001101" + "11001100" + "10101100";
       int value = System.Convert.ToInt32(binary, fromBase: 2);
       byte[] dest = new byte[4];
@@ -58,5 +58,28 @@ namespace Anarchy.Facts {
       displayResult(binary, value, dest);
     }
 
+    [Fact]
+    public void FromByteToInt32() {
+      byte source = System.Convert.ToByte("11001100", fromBase: 2);
+      string binary = "00000000" + "00000000" + "00000000" + "00000000";
+      int dest = System.Convert.ToInt32(binary, fromBase: 2);
+
+      Convert.RawCopyTo(ref source, ref dest, 1);
+
+      Assert.Equal("000000000000000000000000" + "11001100", 
+                   System.Convert.ToString(dest, toBase: 2).PadLeft(32, '0')); 
+    }
+
+    [Fact]
+    public void FromShortToInt32() {
+      short source = System.Convert.ToInt16("11001100" + "10101100", fromBase: 2);
+      string binary = "00000000" + "00000000" + "00000000" + "00000000";
+      int dest = System.Convert.ToInt32(binary, fromBase: 2);
+
+      Convert.RawCopyTo(ref source, ref dest, 2);
+
+      Assert.Equal("0000000000000000" + "11001100" + "10101100",
+                   System.Convert.ToString(dest, toBase: 2).PadLeft(32, '0'));
+    }
   }
 }
