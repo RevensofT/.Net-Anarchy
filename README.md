@@ -7,7 +7,8 @@ Throw rules of Vb.net and C# away, we on our own.
 - Direct cast object without limited.
 - Copy all field between structure and class.
 - Raw byte copy directly between any object.
-- `Get and invoke from method address directly.`
+- Get and invoke from method address directly.
+- Full access and modify any object. (2014/05/14)
 
 ## Get size of reference type
 ```vb
@@ -133,6 +134,29 @@ Let's me talk about what's going on in code above like an evil genius talk about
   - You don't have to worry if you spam spawn too many litegate, it's really light weight, much more light weight then delegate.
   - BUT you need to be careful when invoke it, make sure all of your argument be in the right place, if you instance invoke FIRST OBJECT MUST BE `this` object of an instance that method is member of it; like example above, `Add()` doesn't has any argument on declare but when use as instance method, it real form is `Add(This As Calculus)` that mean when I invoke it I must sent a data that has farmilar structure with `Calculus` type as 1st argument like `Add(Base)` instead of `Add()`.
  
+***
+# Full access and modify any object
+Why we still use inheritance when we can access all member of object already !!
+even an immutable class doesn't escape from our hand !! let's see how we could do that.
+
+1. You need to get pointer of object you want to mess abound, Anarchy has 3 methods to get them.
+    - ByRef : for any value type object but you could use it on class's field or array's element for direct access into that postion(like you want to get pointer from array index 3)
+    - ByArray : for an array type object, start with first element of that array, it has optional argument to shift byte if you don't want to start from first element.
+    - ByClass : same as ByArray but use for any reference type, start with first field of object.
+    - Shift : use for move pointer in byte you got from 3 methods above.
+2. You need to know how much length you want to copy(of course in bytes unit).
+3. You need a container of data, you might be access anything but you still need to push them somewhere in .net.
+
+```VB
+Dim Word = "My World"
+Call "Our".ByArray.Copy(Word.ByArray, 2 * 3)
+
+'Word = "OurWorld"
+```
+In this example I copy data from `"Our"` into `Word`, yep I just change data of immutable type. 
+`2 * 3 '== Size of char * number of char in word`. 
+Oh, if you don't get it why would I use `ByArray`, it's simple string is array of char.
+
 ***
 # It's not even my final form
 Ok guys, I might be out of trick...for now but you guys can give me a request what's kind of feature you want, maybe me or someone else can pull that trick and if you have your own trick that you want to share just pull a request, I need it  more from everyone to ANARCHY us from rule that create by C# and VB.net.
