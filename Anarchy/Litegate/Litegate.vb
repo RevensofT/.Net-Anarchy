@@ -6,49 +6,13 @@ Imports Op = System.Reflection.Emit.OpCodes
 Namespace Anarchy
     Public Module LitegateExtensions
 
-        Private ReadOnly _AddressOf As System.IntPtr
-        Sub New()
-            'Delegate type
-            Dim DGT = GetType(System.Delegate)
-
-            'Native Integer Type
-            Dim NIT = GetType(System.IntPtr)
-
-            'Since vs's ide prevent me to get method address directly and delegate object really secure its data, 
-            'I have got to get method address by bypass delegate unless anyone want to write il directly every they invoke method.
-            With New System.Reflection.Emit.DynamicMethod("DAddressOf", NIT, {DGT}, True)
-
-                With .GetILGenerator
-                    Dim Out = .DefineLabel
-                    .DeclareLocal(NIT)
-
-                    '36 = System.Reflection.BindingFlags.NonPublic Or System.Reflection.BindingFlags.Instance
-
-                    .Emit(Op.Ldarg_0)
-                    .Emit(Op.Ldfld, DGT.GetField("_methodPtrAux", 36))
-                    .Emit(Op.Stloc_0)
-
-                    .Emit(Op.Ldloc_0)
-                    .Emit(Op.Ldc_I4_0)
-                    .Emit(Op.Bne_Un_S, Out)
-
-                    .Emit(Op.Ldarg_0)
-                    .Emit(Op.Ldfld, DGT.GetField("_methodPtr", 36))
-                    .Emit(Op.Stloc_0)
-
-                    .MarkLabel(Out)
-                    .Emit(Op.Ldloc_0)
-                    .Emit(Op.Ret)
-                End With
-
-                Dim Tmp = DirectCast(.CreateDelegate(GetType(System.Func(Of System.Delegate, System.IntPtr))), System.Func(Of System.Delegate, System.IntPtr))
-                _AddressOf = Tmp(Tmp)
-            End With
-        End Sub
-
-        <Extension, Method(External)>
+        <Extension, Method(Inline)>
         Public Function Address(Method As System.Delegate) As Litegate
-            Return Nothing
+            Dim N2 = System.IntPtr.Size * 2
+            Dim MethodAddress(1) As System.IntPtr
+            Method.ByClass(N2).Copy(MethodAddress.ByArray, N2)
+
+            Return If(MethodAddress(1) = Nothing, MethodAddress(0), MethodAddress(1)).As(Of Litegate)()
         End Function
 
         'Preset invoker

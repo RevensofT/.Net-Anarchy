@@ -1,5 +1,7 @@
 ﻿.class public auto ansi sealed beforefieldinit Anarchy.LitegateExtensions
 {
+	
+	/*===============================
 	.method public static valuetype Anarchy.Litegate 
         Address(class [mscorlib]System.Delegate Method) cil managed aggressiveinlining
 	{
@@ -11,6 +13,7 @@
 		calli	   native int(class [mscorlib]System.Delegate)
 		ret
 	}
+	===============================*/
 	
 	//===============================
 	// Function

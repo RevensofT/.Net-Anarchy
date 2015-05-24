@@ -1,5 +1,6 @@
 ﻿Imports Extension = System.Runtime.CompilerServices.ExtensionAttribute
 Imports Method = System.Runtime.CompilerServices.MethodImplAttribute
+Imports Browns = System.ComponentModel.EditorBrowsableAttribute
 
 Namespace Anarchy
 
@@ -10,9 +11,51 @@ Namespace Anarchy
             Return 0
         End Function
 
+        '''<summary>Get size of value type.</summary>
         <Extension, Method(External)>
         Public Function Size(Of T As Structure)(Host As T) As System.UIntPtr
             Return 0
+        End Function
+    End Module
+
+    Public Module Indirect
+        '''<summary>Get a reference pointer.</summary>
+        <Extension, Method(External)>
+        Public Function [ByRef](Of T)(ByRef Input As T) As Pointer
+        End Function
+
+        '''<summary>Get a pointer.</summary>
+        <Extension, Method(External), Browns(1)>
+        Public Function [ByVal](Of T As Class)(Input As T) As Pointer
+        End Function
+
+        '''<summary>Get a reference pointer.</summary>
+        '''<param name="ShiftPointerTo">Move pointer from current position; value is byte type</param>
+        <Extension, Method(External)>
+        Public Function [ByRef](Of T)(ByRef Input As T, ShiftPointerTo As System.IntPtr) As Pointer
+        End Function
+        '''<summary>Get a pointer.</summary>
+        '''<param name="ShiftPointerTo">Move pointer from current position; value is byte type</param>
+        <Extension, Method(External), Browns(1)>
+        Public Function [ByVal](Of T As Class)(Input As T, ShiftPointerTo As System.IntPtr) As Pointer
+        End Function
+
+        '''<summary>Get a pointer of first field of class.</summary>
+        '''<param name="ShiftPointerTo">Move pointer from current position; value is byte type</param>
+        <Extension, Method(Inline)>
+        Public Function ByClass(Of T As Class)(Input As T, Optional ShiftPointerTo As System.IntPtr = Nothing) As Pointer
+            Return Input.ByVal(System.IntPtr.Size + ShiftPointerTo)
+        End Function
+        '''<summary>Get a pointer of first index of any array alike type.</summary>
+        '''<param name="ShiftPointerTo">Move pointer from current position; value is byte type</param>
+        <Extension, Method(Inline)>
+        Public Function ByArray(Of T As Class)(Input As T, Optional ShiftPointerTo As System.IntPtr = Nothing) As Pointer
+            Return Input.ByVal(System.IntPtr.Size + System.IntPtr.Size + ShiftPointerTo)
+        End Function
+
+        '''<summary>Shift pointer from current position.</summary>
+        <Extension, Method(External)>
+        Public Function Shift(Pointer As Pointer, Postion As System.IntPtr) As Pointer
         End Function
     End Module
 
@@ -65,6 +108,15 @@ Namespace Anarchy
         Public Sub RawCopyTo(Of T, V)(ByRef InputField As T, ByRef OutputField As V, LengthByte As UInteger)
         End Sub
 
+        '''<summary>Unsafe copy data from object to object</summary>
+        ''' <param name="Length">Byte length you want to copy.</param>
+        <Extension, Method(External)>
+        Public Sub Copy(Input As Pointer, Output As Pointer, Optional Length As System.UIntPtr = Nothing)
+        End Sub
     End Module
 
+    Public Structure Pointer
+        <System.Security.SecurityCritical>
+        Friend ReadOnly Address As System.IntPtr
+    End Structure
 End Namespace

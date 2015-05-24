@@ -1,4 +1,11 @@
-﻿Imports Anarchy
+﻿Imports Extension = System.Runtime.CompilerServices.ExtensionAttribute
+
+Imports Anarchy
+
+
+Public Structure Exteract
+    Public Base, Target, Prt, Aux As IntPtr
+End Structure
 
 Module Module1
 
@@ -8,19 +15,24 @@ Module Module1
         String.Format("Raw bytes of 258 is [{0}]", String.Join(",", Box)).WriteLine()
         Call "".WriteLine()
 
-        SizeAndConvert()
-        Litegate()
+        Call "' Test get ref type size and convert between them.".ExampleFrom(AddressOf SizeAndConvert)
+        Call "' Test litegate".ExampleFrom(AddressOf Litegate)
+        Call "' Mutable string".ExampleFrom(AddressOf MutableString)
 
         Console.ReadLine()
     End Sub
 
+    Sub MutableString()
+        Dim Word = "My World"
+        Word.WriteLine()
+
+        '2 == char(uint16) type size
+        Call "Our".ByArray.Copy(Word.ByArray, 2 * 3)
+        Word.WriteLine()
+    End Sub
+
     Sub SizeAndConvert()
         Dim Format = " R:{0}, G:{1}, B:{2}"
-
-        MainLine.WriteLine()
-        Call "' Test get ref type size and convert between them.".WriteLine()
-        SubLine.WriteLine()
-        Call "".WriteLine()
 
         With New RefColor With {.R = 200, .G = 100, .B = 50}
             'Get size of reference type.
@@ -29,6 +41,7 @@ Module Module1
             'Copy all value from reference type into value type by size of value type.
             Dim VColor As New ValColor
             .CopyTo(VColor)
+            '.ByValClass.Copy(VColor.ByRef)
 
             'Change value of ref type, prevent confusion.
             .R = 255
@@ -45,21 +58,17 @@ Module Module1
             'Create new ref type and copy value from value type.
             Dim NColor As New RefColor
             VColor.CopyTo(NColor)
+            'VColor.ByRef.Copy(NColor.ByValClass)
+
             With NColor
                 'View data of reference type
                 String.Format("New ref Color =" & Format, .R, .G, .B).WriteLine()
             End With
         End With
 
-        MainLine.WriteLine()
-        Call "".WriteLine()
     End Sub
 
     Sub Litegate()
-        MainLine.WriteLine()
-        Call "' Test litegate".WriteLine()
-        SubLine.WriteLine()
-
         Dim Base As New Calculus With {.A = 12, .B = 4}
 
         Dim Methods = {New System.Func(Of Integer)(AddressOf Base.Add).Address,
@@ -77,11 +86,23 @@ Module Module1
                 'Auto set generic type for no return method.
                 Report.Invoke(Item, Operators(i))
 
-                'For function, request to specify type of this object and arguments.
+                'For function, request to specify type of this object and argumets.
                 Methods(i).Invoke(Of Object, Integer)(Item).WriteLine()
             Next
             Call "".WriteLine()
         Next
+    End Sub
+
+    <Extension>
+    Sub ExampleFrom(Title As String, Method As Action)
+        MainLine.WriteLine()
+        Title.WriteLine()
+        SubLine.WriteLine()
+
+        Call "".WriteLine()
+        Method()
+        Call "".WriteLine()
+
         MainLine.WriteLine()
         Call "".WriteLine()
     End Sub
