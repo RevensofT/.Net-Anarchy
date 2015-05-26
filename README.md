@@ -8,7 +8,8 @@ Throw rules of Vb.net and C# away, we on our own.
 - Copy all field between structure and class.
 - Raw byte copy directly between any object.
 - Get and invoke from method address directly.
-- Full access and modify any object. (2014/05/14)
+- Full access and modify any object. (2014/05/24)
+- Disguise object to other type, common parrent wanna be a child too.(2014/05/26)
 
 ## Get size of reference type
 ```vb
@@ -136,6 +137,11 @@ Let's me talk about what's going on in code above like an evil genius talk about
  
 ***
 # Full access and modify any object
+
+>Update 2015/05/26
+>
+>I change method name from `Copy` to `CopyTo`.
+
 Why we still use inheritance when we can access all member of object already !!
 even an immutable class doesn't escape from our hand !! let's see how we could do that.
 
@@ -149,13 +155,50 @@ even an immutable class doesn't escape from our hand !! let's see how we could d
 
 ```VB
 Dim Word = "My World"
-Call "Our".ByArray.Copy(Word.ByArray, 2 * 3)
+Call "Our".ByArray.CopyTo(Word.ByArray, 2 * 3)
 
 'Word = "OurWorld"
 ```
 In this example I copy data from `"Our"` into `Word`, yep I just change data of immutable type. 
 `2 * 3 '== Size of char * number of char in word`. 
 Oh, if you don't get it why would I use `ByArray`, it's simple string is array of char.
+
+***
+##Disguise object in to other type.
+Are you tired about the rule that said parrent could not be child ? but many parrent want to be a child sometime why should we stop them, let's it go.
+
+```VB
+Public Class Add
+    Public X, Y As Integer
+    Public Overridable Function Process() As Integer
+        Return X + Y
+    End Function
+End Class
+
+Public Class Mul
+    Inherits Add
+    Public Overrides Function Process() As Integer
+        Return X * Y
+    End Function
+End Class
+
+    Sub Disguise()
+        Dim Math As New Add With {.X = 3, .Y = 5}
+        Dim Result As Integer
+        
+        'Add 3 and 5
+        Result = Math.Process ' = 8
+        
+        'Try to cast as mul type
+        Result = Math.As(Of Mul).Process ' = 8
+        
+        'Well, then disguise as mul
+        Math.DisguiseAs(New Mul)
+        Result = Math.Process ' = 15
+    End Sub
+```
+
+Why's it request an instance object not just a type ? sadly I still not master of metadata of object so I have to copy it from somewhere since I can't create it on my own but on the bright side, you still can disguise any object to any reference type. :wink:
 
 ***
 # It's not even my final form
