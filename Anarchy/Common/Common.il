@@ -23,6 +23,12 @@
 		add
 		ret
 	}
+	.method public static native int Token<T>() cil managed aggressiveinlining
+	{
+		.maxstack 1
+		ldtoken !!T
+		ret
+	}
 }
 
 .class public sealed Anarchy.Indirect
@@ -97,6 +103,25 @@
 		ldarg.0
 		ret
 	}
+
+	.method public static !!T As<class T>(valuetype Anarchy.Pointer Input) cil managed aggressiveinlining
+	{
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 ) 
+		.maxstack 1
+
+		ldarg.0
+		ret
+	}
+
+	.method public static !!T To<valuetype T>(valuetype Anarchy.Pointer Input) cil managed aggressiveinlining
+	{
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 ) 
+		.maxstack 2
+
+		ldarg.0
+		ldobj !!T
+		ret
+	}
 	
 	.method public static void CopyTo<class T, valuetype V>(!!T Input, !!V& Output) cil managed aggressiveinlining
 	{
@@ -146,7 +171,7 @@
 		ret
 	}
 	
-	.method public static void Copy(valuetype Anarchy.Pointer Input, valuetype Anarchy.Pointer Output, native uint Length) cil managed aggressiveinlining
+	.method public static void CopyTo(valuetype Anarchy.Pointer Input, valuetype Anarchy.Pointer Output, native uint Length) cil managed aggressiveinlining
 	{
 		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 ) 
 		.maxstack 3
@@ -155,6 +180,26 @@
 		ldarg.0
 		ldarg.2
 		cpblk
+		ret
+	}
+
+	.method public static void DisguiseAs<class T, class V>(!!T From, !!V To) cil managed aggressiveinlining
+	{
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 ) 
+		.maxstack 3
+
+		.locals init ([0] native int)
+		
+		ldloca.s 0
+		ldarg.1
+		sizeof native int
+		cpblk
+
+		ldarg.0
+		ldloca.s 0
+		sizeof native int
+		cpblk
+
 		ret
 	}
 }

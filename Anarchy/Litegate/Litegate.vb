@@ -10,7 +10,7 @@ Namespace Anarchy
         Public Function Address(Method As System.Delegate) As Litegate
             Dim N2 = System.IntPtr.Size * 2
             Dim MethodAddress(1) As System.IntPtr
-            Method.ByClass(N2).Copy(MethodAddress.ByArray, N2)
+            Method.ByClass(N2).CopyTo(MethodAddress.ByArray, N2)
 
             Return If(MethodAddress(1) = Nothing, MethodAddress(0), MethodAddress(1)).As(Of Litegate)()
         End Function

@@ -19,6 +19,8 @@ Module Module1
         Call "' Test litegate".ExampleFrom(AddressOf Litegate)
         Call "' Mutable string".ExampleFrom(AddressOf MutableString)
 
+        Call "' Let disguise our object to other type.".ExampleFrom(AddressOf Disguise)
+
         Console.ReadLine()
     End Sub
 
@@ -27,7 +29,7 @@ Module Module1
         Word.WriteLine()
 
         '2 == char(uint16) type size
-        Call "Our".ByArray.Copy(Word.ByArray, 2 * 3)
+        Call "Our".ByArray.CopyTo(Word.ByArray, 2 * 3)
         Word.WriteLine()
     End Sub
 
@@ -107,6 +109,14 @@ Module Module1
         Call "".WriteLine()
     End Sub
 
+    Sub Disguise()
+        Dim Math As New Add With {.X = 3, .Y = 5}
+
+        Call ("Add 3 and 5 = " & Math.Process).WriteLine()
+        Call ("Try to cast as mul type = " & Math.As(Of Mul).Process).WriteLine()
+        Math.DisguiseAs(New Mul)
+        Call ("Well, then disguise as mul = " & Math.Process).WriteLine()
+    End Sub
 End Module
 
 
@@ -148,4 +158,19 @@ End Class
 
 Public Class Dimenstion
     Public Height, Width As Integer
+End Class
+
+
+Public Class Add
+    Public X, Y As Integer
+    Public Overridable Function Process() As Integer
+        Return X + Y
+    End Function
+End Class
+
+Public Class Mul
+    Inherits Add
+    Public Overrides Function Process() As Integer
+        Return X * Y
+    End Function
 End Class

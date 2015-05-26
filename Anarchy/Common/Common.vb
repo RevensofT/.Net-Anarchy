@@ -16,6 +16,11 @@ Namespace Anarchy
         Public Function Size(Of T As Structure)(Host As T) As System.UIntPtr
             Return 0
         End Function
+
+        '''<summary>Get type token.</summary>
+        <Method(External)>
+        Public Function Token(Of T)() As System.IntPtr
+        End Function
     End Module
 
     Public Module Indirect
@@ -71,6 +76,16 @@ Namespace Anarchy
         Public Function [As](Of T As Structure, V As Structure)(Input As V) As T
         End Function
 
+        '''<summary>Unsafe direct cast type, use it only when you know what're you doing.</summary>
+        <Extension, Method(External)>
+        Public Function [As](Of T As Class)(Input As Pointer) As T
+            Return Nothing
+        End Function
+
+        '''<summary>Unsafe direct cast type, use it only when you know what're you doing.</summary>
+        <Extension, Method(External)>
+        Public Function [To](Of T As Structure)(Input As Pointer) As T
+        End Function
         '===================================
         'Unsupport, hard to design for user to use it without errors.
         '-----------------------------------
@@ -111,7 +126,12 @@ Namespace Anarchy
         '''<summary>Unsafe copy data from object to object</summary>
         ''' <param name="Length">Byte length you want to copy.</param>
         <Extension, Method(External)>
-        Public Sub Copy(Input As Pointer, Output As Pointer, Optional Length As System.UIntPtr = Nothing)
+        Public Sub CopyTo(Input As Pointer, Output As Pointer, Optional Length As System.UIntPtr = Nothing)
+        End Sub
+
+        '''<summary>Disguising an object to other type.</summary>
+        <Extension, Method(External)>
+        Public Sub DisguiseAs(Of T As Class, V As Class)([From] As T, [To] As V)
         End Sub
     End Module
 
