@@ -2,14 +2,22 @@
 Throw rules of Vb.net and C# away, we on our own.
 ***
 
-##What're we already anarchy ?
+## What're we already anarchy ?
 - Get size of reference type.
 - Direct cast object without limited.
 - Copy all field between structure and class.
 - Raw byte copy directly between any object.
 - Get and invoke from method address directly.
 - Full access and modify any object. (2014/05/24)
-- Disguise object to other type, common parrent wanna be a child too.(2014/05/26)
+- ~~Disguise object to other type, common parrent wanna be a child too.(2014/05/26)~~
+- Convert class to other class. (2014/07/22)
+- Convert array to other array's type. (2014/07/22)
+- Reference pointer and generic pointer. (2014/07/22)
+- Ultimate object collection. (2014/07/22)
+
+# Something I create for make my life easier.
+- Native integer calculate (2014/07/22)
+- Manage WinAPI : file system and memory. (2014/07/22)
 
 ## Get size of reference type
 ```vb
@@ -165,6 +173,11 @@ Oh, if you don't get it why would I use `ByArray`, it's simple string is array o
 
 ***
 ##Disguise object in to other type.
+
+>Update 2015/07/22
+>
+>I rename this method to CClass.
+
 Are you tired about the rule that said parrent could not be child ? but many parrent want to be a child sometime why should we stop them, let's it go.
 
 ```VB
@@ -193,14 +206,117 @@ End Class
         Result = Math.As(Of Mul).Process ' = 8
         
         'Well, then disguise as mul
-        Math.DisguiseAs(New Mul)
-        Result = Math.Process ' = 15
+        Dim NewMath As Mul = Math.CClass(New Mul) 'rename from DisguiseAs to CClass.
+        Result = NewMath.Process ' = 15
+        
+        '** Math will become nothing(null) after convert.**
     End Sub
 ```
 
 Why's it request an instance object not just a type ? sadly I still not master of metadata of object so I have to copy it from somewhere since I can't create it on my own but on the bright side, you still can disguise any object to any reference type. :wink:
 
 ***
+## Convert array.
+Isn't it boring and waste of your time to copy each member of array to other array just because it's not the same type even you know it is the same thing like direct cast all child class array to parent class array or something like integer array to byte array; well you don't need to do that any more just grab a red pill !
+
+```VB
+        Dim Base() As Byte = {0, 1, 0, 2}
+
+        Dim BeShort() As UShort = Base.CArray(Of UShort)()
+        'BeShort = {256, 512}
+        'Base = Nothing
+```
+
+It's very simple, isn't it; but one thing you must remember is after you convert array or class, those variant will become nothing to prevent any error from IDE.
+
+## Reference pointer and generic pointer.
+What's a bad day that Vb.net can't use any pointer because deverloper said you don't need it, even on C# you still have some limit to use it; what's a point to keep a powerful tool from you(maybe a weapon of mass destruction for someone xD) go and grab it !
+
+```VB
+        Dim Base() As Byte = {0, 1, 0, 2}
+        
+        'Read only pointer for reference type
+        Dim PBase = Base.ByVal
+        
+        'Load reference object from pointer and load element index 3.
+        Dim Element4 = PBase.Load(3) 'Element4 = 2
+        
+        'Reference pointer that you can get or set value of destination.
+        Dim RElement2 = Base(1).ByRef
+        
+        'Reference pointer has Value property for easy get and set value.
+        RElement2.Value = 3 ' Base = {0, 3, 0, 2}
+```
+You can adapt it to any member of class or structure you want to point to but make sure that object still alive while you point to it.
+
+## Ultimate object collection.
+You have 3 object and each of them have difference type, what's you can do is create an array(collection) of object or create a structure to hold it, isn' it ? well, what if you just want quickly pack everything up without wasting your time to create a structure or boxing value type ? let's get Jinx !
+
+```VB
+        'Create a collection size 32 bytes.
+        Dim Jx As New Jinx(32)
+        
+        Jx.Push(256S) '(short)256 for C#
+        Jx.Push(-1)
+        
+        'Make a reference pointer of string for next item.
+        Dim JxR = Jx.Ref(Of String)()
+        
+        Jx.Push("Hello")
+        
+        'Load value from refence pointer of string.
+        JxR.Value.WriteLine()
+        
+        'Let's pop all value from jinx box.
+        Jx.Pop(Of String).WriteLine()
+        Jx.Pop(Of Integer).WriteLine()
+        Jx.Pop(Of UShort).WriteLine()
+```
+Very easily and simple but you must very carful when use this collection, I don't name it Jinx for no reason; other dev won't know what's you packing into this Jinx(I really want to name it Padora's box) and they never know how much is it large; so don't use it on API unless you want to make it as a black box.
+
+## Native integer calculate.
+Not much to show but lately I heavily use native integer and I have to use it on some calculate so I create some method to help me; now it has addition, subtraction, mulitply, division and remainder. 
+
+## Manage WinAPI : file system and memory.
+Not much to say but if you want to use WinAPI then grab it, I even make it read or write a structure to file.
+
+```VB
+        '-----------------------------------------------
+        'Anarchy.Assist.Stream 
+        '-----------------------------------------------
+        For Each Item In {"Z:\Test.txt", "Z:\Test2.txt", "Z:\Test3.txt", "Z:\Test4.txt"}
+            With Item.OpenRead
+                Call "File Name : ".Write()
+                Item.WriteLine()
+
+                Dim Size As UInteger = .Size
+                Call "File Size : ".Write()
+                Size.WriteLine()
+                
+                'byte[] Tmp = new byte[Size]; 'I hate index initilaization of VB language.
+                Dim Tmp = Size.Array(Of Byte)()
+
+                Call "File Read : ".Write()
+                .ReadTo(Tmp.ByArray, Size).WriteLine()
+
+                Call "File Data : ".Write()
+                String.Join(",", Tmp).WriteLine()
+
+                Call "".WriteLine()
+                .Dispose()
+            End With
+        Next
+
+        '-----------------------------------------------
+        ' Native example
+        '-----------------------------------------------
+        Dim Address = "Z:\Test.txt"
+        Dim File = Native.File.Open(Address, IO.FileAccess.ReadWrite, IO.FileShare.None,
+                                    New Native.File.SECURITY_ATTRIBUTES,
+                                    IO.FileMode.OpenOrCreate, IO.FileOptions.None, Nothing)
+        Native.File.Read(File, Buff.ByArray, 2, Counter, 0)
+```
+
 # It's not even my final form
 Ok guys, I might be out of trick...for now but you guys can give me a request what's kind of feature you want, maybe me or someone else can pull that trick and if you have your own trick that you want to share just pull a request, I need it  more from everyone to ANARCHY us from rule that create by C# and VB.net.
 
