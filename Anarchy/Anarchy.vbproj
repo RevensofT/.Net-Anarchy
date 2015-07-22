@@ -13,7 +13,7 @@
     <AssemblyName>Anarchy</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -53,6 +53,9 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ExObject\Array.vb" />
+    <Compile Include="ExObject\ExObject.vb" />
+    <Compile Include="Native\Calculate.vb" />
     <Compile Include="Common\Common.vb" />
     <Compile Include="Common\Common.il" />
     <Compile Include="Litegate\Litegate.vb" />
@@ -83,6 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Litegate\Litegate.il" />
+    <Compile Include="ExObject\Array.il" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
@@ -93,6 +97,7 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <None Include="App.config" />
+    <Compile Include="Native\Calculate.il" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

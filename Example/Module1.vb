@@ -1,29 +1,68 @@
-﻿Imports Extension = System.Runtime.CompilerServices.ExtensionAttribute
+﻿Imports Method = System.Runtime.CompilerServices.MethodImplAttribute
+Imports Extension = System.Runtime.CompilerServices.ExtensionAttribute
 
 Imports Anarchy
-
-
-Public Structure Exteract
-    Public Base, Target, Prt, Aux As IntPtr
-End Structure
+Imports Anarchy.Assist
 
 Module Module1
-
     Sub Main()
+        '-----------------------------------------------
+        'Anarchy.Assist.Stream 
+        '-----------------------------------------------
+        'For Each Item In {"Z:\Test.txt", "Z:\Test2.txt", "Z:\Test3.txt", "Z:\Test4.txt"}
+        '    With Item.OpenRead
+        '        Call "File Name : ".Write()
+        '        Item.WriteLine()
+
+        '        Dim Size As UInteger = .Size
+        '        Call "File Size : ".Write()
+        '        Size.WriteLine()
+
+        '        Dim Tmp = Size.Array(Of Byte)()
+
+        '        Call "File Read : ".Write()
+        '        .ReadTo(Tmp.ByArray, Size).WriteLine()
+
+        '        Call "File Data : ".Write()
+        '        String.Join(",", Tmp).WriteLine()
+
+        '        Call "".WriteLine()
+        '        .Dispose()
+        '    End With
+        'Next
+
+        '-----------------------------------------------
+        ' Native example
+        '-----------------------------------------------
+        'Dim Address = "Z:\Test.txt"
+        'Dim File = Native.File.Open(Address, IO.FileAccess.ReadWrite, IO.FileShare.None,
+        '                                               New Native.File.SECURITY_ATTRIBUTES,
+        '                                               IO.FileMode.OpenOrCreate, IO.FileOptions.None, Nothing)
+        'Native.File.Read(File, Buff.ByArray, 2, Counter, 0)
+
         Dim Box(1) As Byte
         Call (258).RawCopyTo(Box(0), 2)
         String.Format("Raw bytes of 258 is [{0}]", String.Join(",", Box)).WriteLine()
         Call "".WriteLine()
 
-        Call "' Test get ref type size and convert between them.".ExampleFrom(AddressOf SizeAndConvert)
-        Call "' Test litegate".ExampleFrom(AddressOf Litegate)
-        Call "' Mutable string".ExampleFrom(AddressOf MutableString)
+        Call " Test get ref type size and convert between them.".ExampleFrom(AddressOf SizeAndConvert)
+        Call " Test litegate".ExampleFrom(AddressOf Litegate)
+        Call " Mutable string".ExampleFrom(AddressOf MutableString)
 
-        Call "' Let disguise our object to other type.".ExampleFrom(AddressOf Disguise)
+        Call " Let convert our object to other type.".ExampleFrom(AddressOf ConvertClass)
+        Call " Let convert our array to other type.".ExampleFrom(AddressOf ConvertArray)
+
+        Call " Reference pointer performance (don't run on Visual studio !)".ExampleFrom(AddressOf Reference_Pointer)
+
+        Call SubLine.WriteLine()
+        Call "Testing method from Anarchy.Assist namespace".WriteLine()
+        Call SubLine.WriteLine()
+        Call " Testing a Jinx box".ExampleFrom(AddressOf JinxBox)
 
         Console.ReadLine()
     End Sub
 
+#Region "Testing method"
     Sub MutableString()
         Dim Word = "My World"
         Word.WriteLine()
@@ -95,6 +134,97 @@ Module Module1
         Next
     End Sub
 
+    Sub ConvertClass()
+        Dim Math As New Add With {.X = 3, .Y = 5}
+
+        Call ("Add 3 and 5 = " & Math.Process).WriteLine()
+        Call ("Try to cast as mul type = " & Math.As(Of Mul).Process).WriteLine()
+        Call ("Well, then convert as mul = " & Math.CClass(New Mul).Process).WriteLine()
+        Call "But the variant that containt previous class will become nothing.".WriteLine()
+        Call "So, variant is nothing = ".Write()
+        Call (Math Is Nothing).WriteLine()
+    End Sub
+
+    Sub ConvertArray()
+        Dim Base() As Byte = {0, 1, 0, 2}
+
+        Call "Base array is type of ".Write()
+        Base.ToString.WriteLine()
+        Call "Member of base array is ".Write()
+        String.Join(",", Base).WriteLine()
+
+        Call "".WriteLine()
+
+        Dim BeShort = Base.CArray(Of UShort)()
+        Call "Convert to type ".Write()
+        BeShort.ToString.WriteLine()
+        Call "Member of convert array is ".Write()
+        String.Join(",", BeShort).WriteLine()
+
+        Call "".WriteLine()
+
+        Call "Is base array variant become nothing ? ".Write()
+        Call (Base Is Nothing).WriteLine()
+    End Sub
+
+    Sub JinxBox()
+        Dim Jx As New Jinx(32)
+
+        Call "Push value of int16, 256 into jinx box.".WriteLine()
+        Jx.Push(256S)
+
+        Call "Push value of int32, -1 into jinx box.".WriteLine()
+        Jx.Push(-1)
+
+        Call "Make a reference pointer of string for next item.".WriteLine()
+        Dim JxR = Jx.Ref(Of String)()
+
+        Call "Push string, 'Hello' into jinx box.".WriteLine()
+        Jx.Push("Hello")
+
+        Call "".WriteLine()
+
+        Call "Load value from refence pointer of string".WriteLine()
+        JxR.Value.WriteLine()
+
+        Call "".WriteLine()
+
+        Call "Let's pop all value from jinx box.".WriteLine()
+
+        Jx.Pop(Of String).WriteLine()
+        Jx.Pop(Of Integer).WriteLine()
+        Jx.Pop(Of UShort).WriteLine()
+    End Sub
+
+    Sub Reference_Pointer()
+        Dim CA As New Calculus
+        Dim CAA = CA.A.ByRef
+
+        Call "Method : Class.Member + = 1".WriteLine()
+        Dim Time = Date.Now
+        For i = 1 To 1000000000
+            CA.A += 1
+        Next
+        Call (Date.Now - Time).WriteLine()
+
+        Call "Loop count = ".Write()
+        CA.A.WriteLine()
+
+        Call "".WriteLine()
+
+        Call "Method : ReferencePointer + = 1".WriteLine()
+        CA.A = 0
+        Time = Date.Now
+        For i = 1 To 1000000000
+            CAA.Value += 1
+        Next
+
+        Call (Date.Now - Time).WriteLine()
+        Call "Loop count = ".Write()
+        CAA.Value.WriteLine()
+    End Sub
+#End Region
+
     <Extension>
     Sub ExampleFrom(Title As String, Method As Action)
         MainLine.WriteLine()
@@ -108,18 +238,9 @@ Module Module1
         MainLine.WriteLine()
         Call "".WriteLine()
     End Sub
-
-    Sub Disguise()
-        Dim Math As New Add With {.X = 3, .Y = 5}
-
-        Call ("Add 3 and 5 = " & Math.Process).WriteLine()
-        Call ("Try to cast as mul type = " & Math.As(Of Mul).Process).WriteLine()
-        Math.DisguiseAs(New Mul)
-        Call ("Well, then disguise as mul = " & Math.Process).WriteLine()
-    End Sub
 End Module
 
-
+#Region "Testing type"
 Public Class RefColor
     Public R, G, B As Byte
 End Class
@@ -174,3 +295,5 @@ Public Class Mul
         Return X * Y
     End Function
 End Class
+
+#End Region

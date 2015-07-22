@@ -8,7 +8,13 @@
 		sizeof !!T
 		ret
 	}
+	.method public static native uint Size<T>() cil managed aggressiveinlining
+	{
+		.maxstack 1
 
+		sizeof !!T
+		ret
+	}
     .method public static native uint Size<class T,  V>(!!T Host, !!V& LastField) cil managed aggressiveinlining
 	{
 		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 ) 
@@ -23,17 +29,49 @@
 		add
 		ret
 	}
+
+	.method public static native uint NativeLength<T>(!!T[] Host) cil managed aggressiveinlining
+	{
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 ) 
+		.maxstack 1
+
+		ldarg.0
+		ldlen
+		ret
+	}
+
+	.method public static valuetype Anarchy.RefPointer`1<!!T> NativeIndex<T>(!!T[] Host, native int Index) cil managed aggressiveinlining
+	{
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 ) 
+		.maxstack 2
+
+		ldarg.0
+		ldarg.1
+		ldelema !!T
+		ret
+	}
+
 	.method public static native int Token<T>() cil managed aggressiveinlining
 	{
 		.maxstack 1
 		ldtoken !!T
 		ret
 	}
+
+	/*
+	.method public static valuetype Anarchy.Pointer Rift(uint8 Size) cil managed aggressiveinlining
+	{
+		.maxstack 1
+		ldarg.0
+		localloc
+		ret
+	}
+	*/
 }
 
 .class public sealed Anarchy.Indirect
 {
-	.method public static valuetype Anarchy.Pointer ByRef<T>(!!T& Input) cil managed aggressiveinlining
+	.method public static valuetype Anarchy.RefPointer`1<!!T> ByRef<T>(!!T& Input) cil managed aggressiveinlining
 	{
 		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 ) 
 		.maxstack 1
@@ -41,9 +79,17 @@
 		ldarg.0
 		ret
 	}
-	.method public static valuetype Anarchy.Pointer ByVal<class T>(!!T Input) cil managed aggressiveinlining
+	/*.method public static valuetype Anarchy.Pointer`1<!!T> ByStruct<valuetype T>(!!T& Input) cil managed aggressiveinlining
 	{
-		.custom instance void [System]System.ComponentModel.EditorBrowsableAttribute::.ctor(valuetype [System]System.ComponentModel.EditorBrowsableState) = ( 01 00 01 00 00 00 00 00 ) 
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 ) 
+		.maxstack 1
+
+		ldarg.0
+		ret
+	}*/
+	.method public static valuetype Anarchy.Pointer`1<!!T> ByVal<class T>(!!T Input) cil managed aggressiveinlining
+	{
+		//.custom instance void [System]System.ComponentModel.EditorBrowsableAttribute::.ctor(valuetype [System]System.ComponentModel.EditorBrowsableState) = ( 01 00 01 00 00 00 00 00 ) 
 		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 ) 
 		.maxstack 1
 
@@ -119,7 +165,7 @@
 		.maxstack 2
 
 		ldarg.0
-		ldobj !!T
+		//ldobj !!T
 		ret
 	}
 	
@@ -183,7 +229,7 @@
 		ret
 	}
 
-	.method public static void DisguiseAs<class T, class V>(!!T From, !!V To) cil managed aggressiveinlining
+	/*.method public static void DisguiseAs<class T, class V>(!!T From, !!V To) cil managed aggressiveinlining
 	{
 		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 ) 
 		.maxstack 3
@@ -201,5 +247,112 @@
 		cpblk
 
 		ret
+	}*/
+
+	.method public static !!V  CClass<class T,class V>(!!T& From, !!V Sample) cil managed aggressiveinlining
+	{
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 ) 
+		.maxstack 3
+
+		.locals init ([0] native int)
+		
+		ldarg.0
+		ldind.ref
+		ldarg.1
+		sizeof native int
+		cpblk
+
+		ldarg.0
+		ldind.ref
+
+		ldarg.0
+		ldnull
+		stind.ref
+
+		ret
 	}
+
+	.method public static !!V[] CArray<T, V>(!!T[]& From) cil managed aggressiveinlining
+	{
+		.custom instance void [mscorlib]System.Runtime.CompilerServices.ExtensionAttribute::.ctor() = ( 01 00 00 00 ) 
+		.maxstack 3
+
+		.locals init ([0] native int, [1] !!T[])
+
+		ldarg.0
+		ldind.ref
+		stloc.1
+		
+		ldloc.1
+		ldc.i4.0
+		newarr !!V
+		sizeof native int
+		cpblk
+
+		//{-----------------------
+		ldloc.1
+		sizeof native int
+		add
+
+		sizeof !!T
+		conv.r4
+		sizeof !!V
+		conv.r4
+		div
+		ldloc.1
+		ldlen
+		conv.r4
+		mul
+		conv.i
+		stloc.0
+
+		ldloca.s 0
+		
+		sizeof native int
+		cpblk
+		//-----------------------}
+
+		ldarg.0
+		ldnull
+		stind.ref
+
+		ldloc.1
+		ret
+	}
+}
+
+
+/*
+.class public sequential ansi sealed beforefieldinit Anarchy.Pointer`1<T>
+       extends [mscorlib]System.ValueType
+{
+	.method public specialname static valuetype Anarchy.Pointer 
+        op_Implicit(valuetype Anarchy.Pointer`1<!T> Input) cil managed aggressiveinlining
+	{
+		ldarg.0
+		ret
+	}
+}
+*/
+
+.class public sequential ansi sealed Anarchy.RefPointer`1<T>
+       extends [mscorlib]System.ValueType
+{
+	.method public specialname instance !T  get_Value() cil managed aggressiveinlining
+	{
+		.maxstack 1
+		ldarg.0
+		ldfld      native int valuetype Anarchy.RefPointer`1<!T>::Address
+		ldobj	!T
+		ret
+	}
+	.method public specialname instance void set_Value(!T 'value') cil managed aggressiveinlining
+	{
+		ldarg.0
+		ldfld      native int valuetype Anarchy.RefPointer`1<!T>::Address
+		ldarg.1
+		stobj !T
+		ret
+	}
+
 }
